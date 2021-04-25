@@ -65,6 +65,7 @@ class GameCanvasElement(GameElement):
     def update(self):
         pass
 
+
 class Text(GameCanvasElement):
     def __init__(self, game_app, text, x=0, y=0):
         self.text = text
@@ -93,15 +94,23 @@ class Sprite(GameCanvasElement):
             self.y,
             image=self.photo_image)
 
+class KeyboardHandler:
+    def __init__(self, successor=None):
+        self.successor = successor
 
-class GameApp(ttk.Frame): 
+    def handle(self, event):
+        if self.successor:
+            self.successor.handle(event)
+
+
+class GameApp(ttk.Frame):
     def __init__(self, parent, canvas_width=800, canvas_height=500, update_delay=33):
         super().__init__(parent)
         self.parent = parent
-        
+
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
-        
+
         self.update_delay = update_delay
 
         self.grid(sticky="news")
@@ -114,10 +123,18 @@ class GameApp(ttk.Frame):
 
         self.parent.bind('<KeyPress>', self.on_key_pressed)
         self.parent.bind('<KeyRelease>', self.on_key_released)
-        
+        self.key_pressed_handler = KeyboardHandler()
+        self.key_released_handler = KeyboardHandler()
+
+        def on_key_pressed(self, event):
+            self.key_pressed_handler.handle(event)
+
+        def on_key_released(self, event):
+            self.key_released_handler.handle(event)
+
     def create_canvas(self):
         self.canvas = tk.Canvas(self, borderwidth=0,
-            width=self.canvas_width, height=self.canvas_height, 
+            width=self.canvas_width, height=self.canvas_height,
             highlightthickness=0)
         self.canvas.grid(sticky="news")
 
@@ -165,3 +182,5 @@ class GameApp(ttk.Frame):
 
     def on_key_released(self, event):
         pass
+
+
