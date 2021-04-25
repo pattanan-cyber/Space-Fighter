@@ -92,6 +92,13 @@ class Sprite(GameCanvasElement):
             self.x, 
             self.y,
             image=self.photo_image)
+class KeyboardHandler:
+    def __init__(self, successor=None):
+        self.successor = successor
+
+    def handle(self, event):
+        if self.successor:
+            self.successor.handle(event)
 
 
 class GameApp(ttk.Frame): 
@@ -114,7 +121,15 @@ class GameApp(ttk.Frame):
 
         self.parent.bind('<KeyPress>', self.on_key_pressed)
         self.parent.bind('<KeyRelease>', self.on_key_released)
-        
+        self.key_pressed_handler = KeyboardHandler()
+        self.key_released_handler = KeyboardHandler()
+
+        def on_key_pressed(self, event):
+            self.key_pressed_handler.handle(event)
+
+        def on_key_released(self, event):
+            self.key_released_handler.handle(event)
+
     def create_canvas(self):
         self.canvas = tk.Canvas(self, borderwidth=0,
             width=self.canvas_width, height=self.canvas_height, 
@@ -165,3 +180,18 @@ class GameApp(ttk.Frame):
 
     def on_key_released(self, event):
         pass
+
+
+# class EnemyGenerationStrategy(ABC):
+#     @abstractmethod
+#     def generate(self, space_game, ship):
+#         pass
+# class StarEnemyGenerationStrategy(EnemyGenerationStrategy):
+#     def generate(self, space_game, ship):
+#         ####
+#         # TODO: extracted from method create_enemy_star
+#
+# class EdgeEnemyGenerationStrategy(EnemyGenerationStrategy):
+#     def generate(self, space_game, ship):
+#         ####
+#         # TODO: extracted from method create_enemy_from_edge
